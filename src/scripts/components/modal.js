@@ -1,15 +1,21 @@
 //Функция открытия модального окна
-function openPopup(namePopup, Escape) {
+function openPopup(namePopup) {
   namePopup.classList.add('popup_is-opened');
 
-  document.addEventListener('keydown', Escape);
+  document.addEventListener('keydown', clickEscape);
 };
 
 //Функция закрытия модального окна
-function closedPopup(namePopup, Escape) {
+function closedPopup(namePopup) {
   namePopup.classList.remove('popup_is-opened');
 
-  document.removeEventListener('keydown', Escape);
+  document.removeEventListener('keydown', clickEscape);
+};
+
+function clickEscape(evt) {
+  if (evt.key === 'Escape'){
+    closedPopup(document.querySelector('.popup_is-opened'), clickEscape);
+  }
 };
 
 export {openPopup, closedPopup}
