@@ -14,7 +14,7 @@ function closedPopup(namePopup) {
 
 function clickEscape(evt) {
   if (evt.key === 'Escape'){
-    closedPopup(document.querySelector('.popup_is-opened'), clickEscape);
+    closedPopup(document.querySelector('.popup_is-opened'));
   }
 };
 

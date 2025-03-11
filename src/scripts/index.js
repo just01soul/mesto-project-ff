@@ -38,7 +38,6 @@ function handleFormSubmitEditCard(evt) {
   };
   placesList.prepend(createCard(obj, deleteCard, likeImage, openPopupImage));
   closedPopup(editCard);
-  formEditCard.reset();
 };
 
 formEditCard.addEventListener('submit', handleFormSubmitEditCard);
@@ -46,16 +45,12 @@ formEditCard.addEventListener('submit', handleFormSubmitEditCard);
 //Закрытие модальных окон разными способами
 allPopups.forEach(function (item) {
   item.classList.add('popup_is-animated');
-  item.addEventListener('click', function (evt) {
-    if (evt.target.classList.contains('popup__close')){
-      closedPopup(evt.currentTarget);
-      formEditCard.reset();
-    };
+  item.querySelector('.popup__close').addEventListener('click', function (evt) {
+    closedPopup(item);
   });
   item.addEventListener('mousedown', function (evt) {
      if (evt.target.classList.contains('popup')){
       closedPopup(evt.target);
-      formEditCard.reset();
     };
   });
 });
@@ -70,6 +65,7 @@ buttonEditProfile.addEventListener('click', () => {
 //Открытие окна создания карточки
 buttonAddCard.addEventListener('click', () => {
   openPopup(editCard);
+  formEditCard.reset();
 });
 
 //Открытие окна с картинкой
