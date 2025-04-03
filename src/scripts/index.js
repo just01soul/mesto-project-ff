@@ -2,12 +2,12 @@
 import '../pages/index.css';
 
 //Импорт модулей
-import {createCard} from './components/card.js';
+import {createCard, likeCardImage, deleteCard} from './components/card.js';
 import {openPopup, closedPopup} from './components/modal.js';
 import {enableValidation, clearValidation} from './components/validation.js';
 import {
   getInitialCards, getMyProfile, patchMyProfile,
-  postMyCard,patchMyAvatarProfile
+  postMyCard,patchMyAvatarProfile, deleteMyCard, likeCard
 } from './components/api.js';
 
 //DOM узлы
@@ -29,15 +29,20 @@ const imageProfile = document.querySelector('.profile__image');
 const formEditCard = editCard.querySelector('.popup__form');
 const namePlaceInput = formEditCard.querySelector('.popup__input_type_card-name');
 const linkInput = formEditCard.querySelector('.popup__input_type_url');
-const EditAvatarProfile = document.querySelector('.popup_type_avatar-image');
-const formEditAvatarProfile = EditAvatarProfile.querySelector('.popup__form');
+const editAvatarProfile = document.querySelector('.popup_type_avatar-image');
+const formEditAvatarProfile = editAvatarProfile.querySelector('.popup__form');
 const urlAvatarInput = formEditAvatarProfile.querySelector('.popup__input_type_url');
+const popupDelCard = document.querySelector('.popup_type_del-card');
+const buttonDelCard = popupDelCard.querySelector('.popup__button');
+
+let idCardForDel = ''; //создаем переменную для получения айди карточки
+let cardDel = '';   //создаем переменную для получения данных самой карточки
 
 //Вывести карточки на страницу
 Promise.all([getMyProfile(), getInitialCards()])
-  .then((result) => {
-    getDataProfile (result[0]);
-    getDataCards(result[0], result[1]);
+  .then(([userData, cardsArray]) => {
+    getDataProfile (userData);
+    getDataCards(userData, cardsArray);
   })
   .catch((err) => {
     console.log(err);
@@ -46,7 +51,7 @@ Promise.all([getMyProfile(), getInitialCards()])
 //Вывести данные карточек
 function getDataCards(dataMyProfile, dataCards) {
   dataCards.forEach(function (item) {
-    placesList.append(createCard(item, dataMyProfile, item.likes.slice(), openPopupImage));
+    placesList.append(createCard(item, dataMyProfile, item.likes.slice(), openPopupImage, confirmDelCard, delCard, likeCardImage, likeCard));
   });
 };
 
@@ -63,7 +68,7 @@ function handleFormSubmitEditCard(evt) {
   renderLoading(editCard, false)
   postMyCard(namePlaceInput.value, linkInput.value)
     .then ((result) => {
-      placesList.prepend(createCard(result, result.owner, result.likes.slice(), openPopupImage))
+      placesList.prepend(createCard(result, result.owner, result.likes.slice(), openPopupImage, confirmDelCard, delCard, likeCardImage, likeCard))
       closedPopup(editCard);
     })
     .catch((err) => {
@@ -97,7 +102,7 @@ buttonEditProfile.addEventListener('click', () => {
 
 //Открытие окна изменения аватара
 imageProfile.addEventListener('click', () => {
-  openPopup(EditAvatarProfile);
+  openPopup(editAvatarProfile);
   formEditAvatarProfile.reset();
   clearValidation(formEditAvatarProfile, validationConfig);
 });
@@ -138,16 +143,16 @@ formEditProfile.addEventListener('submit', handleFormSubmitEditProfile);
 //Сохранение изменения аватара
 function handleFormSubmitEditAvatarProfile(evt) {
   evt.preventDefault();
-  renderLoading(EditAvatarProfile, false); 
+  renderLoading(editAvatarProfile, false); 
   patchMyAvatarProfile(urlAvatarInput.value)
     .then ((result) => {
       imageProfile.style.backgroundImage = `url(${result.avatar})`;
-      closedPopup(EditAvatarProfile);
+      closedPopup(editAvatarProfile);
     })
     .catch((err) => {
       console.log(err);
     })
-    .finally(() => renderLoading(EditAvatarProfile, true))
+    .finally(() => renderLoading(editAvatarProfile, true))
 }
 
 formEditAvatarProfile.addEventListener('submit', handleFormSubmitEditAvatarProfile);
@@ -173,7 +178,26 @@ function renderLoading(form, isLoading) {
   }
 };
 
+//Функция подтверждения удаления карточки
+function confirmDelCard(cardElement, cardData) {
+  openPopup(popupDelCard);
+  idCardForDel = cardData._id;
+  cardDel = cardElement;
+};
+
+//Вызов удаления карточки
+function delCard(idCard, card) {
+  deleteMyCard(idCard)
+    .then (() => {
+      deleteCard(card);
+      closedPopup(popupDelCard);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+buttonDelCard.addEventListener('click', () => delCard(idCardForDel, cardDel));
+
 //Первоначальный вызов функций создания страницы
 enableValidation(validationConfig); //Вызов функции валидации
-
-export {openPopup, closedPopup}

@@ -7,18 +7,20 @@ const config = {
   }
 };
 
+//Функция проверки ответа сервера
+function checkResponse(res) {
+  if (res.ok) {
+    return res.json();
+  }
+  return Promise.reject(`Ошибка ${res.status}`);
+};
+
 //Запрос данных карточки
 const getInitialCards = () => {
   return fetch(`${config.baseUrl}/cards`, {
     headers: config.headers
   })
-    .then(res => {
-      if (res.ok) {
-        return res.json();
-      }
-      // если ошибка, отклоняем промис
-      return Promise.reject(`Ошибка: ${res.status}`);
-    })
+  .then(res => checkResponse(res))
 };
 
 //Запрос данных моего профиля
@@ -26,13 +28,7 @@ const getMyProfile = () => {
   return fetch(`${config.baseUrl}/users/me`, {
     headers: config.headers
   })
-  .then(res => {
-    if (res.ok) {
-      return res.json();
-    }
-    // если ошибка, отклоняем промис
-    return Promise.reject(`Ошибка: ${res.status}`);
-  })
+  .then(res => checkResponse(res))
 };
 
 //Запрос изменения данных моего профиля
@@ -45,13 +41,7 @@ const patchMyProfile = (nameProfile, job) => {
       about: job
     })
   })
-  .then(res => {
-    if (res.ok) {
-      return res.json();
-    }
-    // если ошибка, отклоняем промис
-    return Promise.reject(`Ошибка: ${res.status}`);
-  })
+  .then(res => checkResponse(res))
 };
 
 //Запрос изменения аватара моего профиля
@@ -63,13 +53,7 @@ const patchMyAvatarProfile = (urlAvatarImage) => {
       avatar: urlAvatarImage,
     })
   })
-  .then(res => {
-    if (res.ok) {
-      return res.json();
-    }
-    // если ошибка, отклоняем промис
-    return Promise.reject(`Ошибка: ${res.status}`);
-  })
+  .then(res => checkResponse(res))
 };
 
 //Запрос добавления карточки
@@ -82,13 +66,7 @@ const postMyCard = (nameCard, linkCard) => {
       link: linkCard
     })
   })
-  .then(res => {
-    if (res.ok) {
-      return res.json();
-    }
-    // если ошибка, отклоняем промис
-    return Promise.reject(`Ошибка: ${res.status}`);
-  })
+  .then(res => checkResponse(res))
 };
 
 //Запрос удаления карточки
@@ -97,13 +75,7 @@ const deleteMyCard = (cardId) => {
     method: 'DELETE',
     headers: config.headers,
   })
-  .then(res => {
-    if (res.ok) {
-      return res.json();
-    }
-    // если ошибка, отклоняем промис
-    return Promise.reject(`Ошибка: ${res.status}`);
-  })
+  .then(res => checkResponse(res))
 };
 
 //Запрос лайка/дизлайка карточки
@@ -112,13 +84,7 @@ const likeCard = (cardId, methodFetch) => {
     method: methodFetch,
     headers: config.headers,
   })
-  .then(res => {
-    if (res.ok) {
-      return res.json();
-    }
-    // если ошибка, отклоняем промис
-    return Promise.reject(`Ошибка: ${res.status}`);
-  })
+  .then(res => checkResponse(res))
 };
 
 export {
