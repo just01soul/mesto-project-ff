@@ -51,7 +51,8 @@ Promise.all([getMyProfile(), getInitialCards()])
 //Вывести данные карточек
 function getDataCards(dataMyProfile, dataCards) {
   dataCards.forEach(function (item) {
-    placesList.append(createCard(item, dataMyProfile, item.likes.slice(), openPopupImage, confirmDelCard, delCard, likeCardImage, likeCard));
+    console.log(dataMyProfile)
+    placesList.append(createCard(item, dataMyProfile, item.likes.slice(), openPopupImage, confirmDelCard, likeCardImage, likeCard));
   });
 };
 
@@ -68,7 +69,7 @@ function handleFormSubmitEditCard(evt) {
   renderLoading(editCard, false)
   postMyCard(namePlaceInput.value, linkInput.value)
     .then ((result) => {
-      placesList.prepend(createCard(result, result.owner, result.likes.slice(), openPopupImage, confirmDelCard, delCard, likeCardImage, likeCard))
+      placesList.prepend(createCard(result, result.owner, result.likes.slice(), openPopupImage, confirmDelCard, likeCardImage, likeCard))
       closedPopup(editCard);
     })
     .catch((err) => {
